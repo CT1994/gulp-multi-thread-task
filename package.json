@@ -1,7 +1,7 @@
 {
   "name": "gulp-multi-thread-task",
   "version": "1.0.0",
-  "description": "Takes a gulp task and make's it run in multiple threads to improve build time on large tasks",
+  "description": "Takes a gulp task and make's it run in multiple threads to improve build time",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
