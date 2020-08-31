@@ -1,5 +1,6 @@
 const cluster = require('cluster');
 const log = require('fancy-log');
+const PluginError = require('plugin-error');
 const {masterMessageHandlers, workerMessageHandlers} = require("./lib/message-handlers");
 const {processGlobArray, validateOptions} = require('./lib/options-helpers');
 require('colors');
@@ -16,6 +17,11 @@ function createWorker(handlers) {
         worker.on('message', message => handlers[message.type](worker, message));
         worker.on('exit', resolve);
         worker.on('error', reject);
+        cluster.on('exit', (worker, code, signal) => {
+            if (signal || code !== 0) {
+                cluster.disconnect(() => reject(new PluginError('GulpMultiThreadTask', 'Task passed to GulpMultiThreadTask threw an error')))
+            }
+        });
     });
 }
 
@@ -55,6 +61,13 @@ function GulpMultiThreadTask(globArray, builder, options = {}) {
     } else {
         const messageHandlers = workerMessageHandlers(builder)
         process.on('message', message => messageHandlers[message.type](message));
+        process.on('exit', (code, signal) => {
+            if (signal || code !== 0) {
+                return messageHandlers.workerPromise.reject()
+            }
+
+            return messageHandlers.workerPromise.resolve()
+        });
         return messageHandlers.workerPromise;
     }
 }
