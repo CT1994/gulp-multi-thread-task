@@ -19,7 +19,8 @@ function createWorker(handlers) {
         worker.on('error', reject);
         cluster.on('exit', (worker, code, signal) => {
             if (signal || code !== 0) {
-                cluster.disconnect(() => reject(new PluginError('GulpMultiThreadTask', 'Task passed to GulpMultiThreadTask threw an error')))
+                cluster.disconnect()
+                return reject(new PluginError('GulpMultiThreadTask', 'Task passed to GulpMultiThreadTask threw an error'))
             }
         });
     });
@@ -61,13 +62,7 @@ function GulpMultiThreadTask(globArray, builder, options = {}) {
     } else {
         const messageHandlers = workerMessageHandlers(builder)
         process.on('message', message => messageHandlers[message.type](message));
-        process.on('exit', (code, signal) => {
-            if (signal || code !== 0) {
-                return messageHandlers.workerPromise.reject()
-            }
-
-            return messageHandlers.workerPromise.resolve()
-        });
+        process.on('uncaughtException', (error) => messageHandlers.workerPromise.reject(new PluginError('GulpMultiThreadTask', error.message)));
         return messageHandlers.workerPromise;
     }
 }
