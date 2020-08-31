@@ -12,11 +12,8 @@ require('colors');
 function createWorker(handlers) {
     const worker = cluster.fork();
 
-    worker.on('message', message => {
-        handlers[message.type](worker, message)
-    });
-
     return new Promise(function (resolve, reject) {
+        worker.on('message', message => handlers[message.type](worker, message));
         worker.on('exit', resolve);
         worker.on('error', reject);
     });
