@@ -2,7 +2,7 @@ const cluster = require('cluster');
 const log = require('fancy-log');
 
 const {masterMessageHandlers, workerMessageHandlers} = require("./lib/message-handlers");
-const {processGlobArray, validateOptions} = require('./lib/options-helpers');
+const {validateOptions} = require('./lib/options-helpers');
 require('colors');
 
 /**
@@ -27,14 +27,14 @@ function createWorker(handlers, options) {
 
 /**
  * @description Sets up the IPC message handlers, and spawn `workerCount` child processes to actually process the files.
- * @param {Array<string>|Array<Array<string>>} globArray
+ * @param {Array<string>|Array<Array<string>>} processedGlobArray
  * @param {MultiThreadOptions} options
  * @return {Promise<Array<Promise>>}
  */
-function spawnWorkers(globArray, options) {
+function spawnWorkers(processedGlobArray, options) {
     log(`spawning ${options.concurrency.toString().yellow} worker`);
 
-    const handlers = masterMessageHandlers(globArray);
+    const handlers = masterMessageHandlers(processedGlobArray);
 
     const promises = [];
     for (let i = 0; i < options.concurrency; ++i) {
@@ -54,9 +54,8 @@ function spawnWorkers(globArray, options) {
  */
 function GulpMultiThreadTask(globArray, builder, options = {}) {
     if (cluster.isMaster) {
-        const validatedOptions = validateOptions(options);
-        const fileList = processGlobArray(globArray);
-        return spawnWorkers(fileList, validatedOptions);
+        const {processedGlobArray, validatedOptions} = validateOptions(globArray, options);
+        return spawnWorkers(processedGlobArray, validatedOptions);
     } else {
         const messageHandlers = workerMessageHandlers(builder)
         process.on('message', message => messageHandlers[message.type](message));
