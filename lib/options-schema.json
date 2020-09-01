@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "concurrency": {
+      "description": "The number of threads to use",
+      "type": "number"
+    },
+    "silent": {
+      "description": "start worker thread with silent flag",
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

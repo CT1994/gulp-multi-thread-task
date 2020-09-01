@@ -8,11 +8,12 @@ require('colors');
 /**
  * @description initialises a new worker and returns a Promise that resolves when the worker process ends.
  * @param {Object} handlers
+ * @param {MultiThreadOptions} options
  * @return {Promise}
  */
-function createWorker(handlers) {
+function createWorker(handlers, options) {
     cluster.setupMaster({
-        silent: true
+        silent: options.silent
     });
 
     const worker = cluster.fork();
@@ -27,17 +28,17 @@ function createWorker(handlers) {
 /**
  * @description Sets up the IPC message handlers, and spawn `workerCount` child processes to actually process the files.
  * @param {Array<string>|Array<Array<string>>} globArray
- * @param {number} workerCount
+ * @param {MultiThreadOptions} options
  * @return {Promise<Array<Promise>>}
  */
-function spawnWorkers(globArray, workerCount) {
-    log(`spawning ${workerCount.toString().yellow} worker`);
+function spawnWorkers(globArray, options) {
+    log(`spawning ${options.workerCount.toString().yellow} worker`);
 
     const handlers = masterMessageHandlers(globArray);
 
     const promises = [];
-    for (let i = 0; i < workerCount; ++i) {
-        promises.push(createWorker(handlers));
+    for (let i = 0; i < options.workerCount; ++i) {
+        promises.push(createWorker(handlers, options));
     }
 
     return Promise.all(promises);
@@ -54,9 +55,8 @@ function spawnWorkers(globArray, workerCount) {
 function GulpMultiThreadTask(globArray, builder, options = {}) {
     if (cluster.isMaster) {
         const validatedOptions = validateOptions(options);
-        const workerCount = validatedOptions.concurrency;
         const fileList = processGlobArray(globArray);
-        return spawnWorkers(fileList, workerCount);
+        return spawnWorkers(fileList, validatedOptions);
     } else {
         const messageHandlers = workerMessageHandlers(builder)
         process.on('message', message => messageHandlers[message.type](message));
