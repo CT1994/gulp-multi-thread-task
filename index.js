@@ -32,12 +32,12 @@ function createWorker(handlers, options) {
  * @return {Promise<Array<Promise>>}
  */
 function spawnWorkers(globArray, options) {
-    log(`spawning ${options.workerCount.toString().yellow} worker`);
+    log(`spawning ${options.concurrency.toString().yellow} worker`);
 
     const handlers = masterMessageHandlers(globArray);
 
     const promises = [];
-    for (let i = 0; i < options.workerCount; ++i) {
+    for (let i = 0; i < options.concurrency; ++i) {
         promises.push(createWorker(handlers, options));
     }
 
