@@ -21,6 +21,7 @@ describe('Options', () => {
     })
 
     test('invalid type for globArray should throw an error', () => {
-        expect(() => validateOptions(null, {})).toThrowError(new Error('globArray should be an Array'));
+        expect(() => validateOptions('', {})).toThrowError(new Error('globArray should be an Array'));
+        expect(() => validateOptions([{}], {})).toThrowError(new Error('only supports Array of string'));
     });
 })
