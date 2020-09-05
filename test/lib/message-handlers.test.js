@@ -3,9 +3,9 @@ const cluster = require('cluster');
 const {masterMessageHandlers} = require("../../lib/message-handlers");
 
 describe('message-handlers', () => {
-    test(('testing getFile being called processedGlobArray.length + 1'), () => {
+    test(('testing getFile being called number of time equal to processedGlobArray.length + 1'), () => {
         cluster.setupMaster({
-            exec: path.resolve(__dirname + '/__mocks__/message-handlers-mocks.js')
+            exec: path.resolve(__dirname + '/__mocks__/message-handlers-mock.js')
         });
         const worker = cluster.fork();
 
@@ -22,5 +22,22 @@ describe('message-handlers', () => {
             worker.on('error', reject);
         })
             .then(() => expect(getFileSpy).toHaveBeenCalledTimes(processArrayGlobSize + 1));
+    })
+
+    test(('testing workerError being called from child worker'), () => {
+        cluster.setupMaster({
+            exec: path.resolve(__dirname + '/__mocks__/message-handlers-error-mock.js')
+        });
+        const worker = cluster.fork();
+
+        const handlers = masterMessageHandlers([]);
+        const workerErrorSpy = jest.spyOn(handlers, 'workerError')
+
+        return new Promise((resolve, reject) => {
+            worker.on('message', (message) => handlers[message.type](worker, message, reject));
+            worker.on('exit', resolve);
+            worker.on('error', reject);
+        })
+            .catch(() => expect(workerErrorSpy).toHaveBeenCalledTimes(1));
     })
 })
