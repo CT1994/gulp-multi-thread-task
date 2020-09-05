@@ -2,8 +2,8 @@ const {validateOptions} = require('../../lib/options-helpers');
 
 describe('Options', () => {
     test('should get options and files back', () => {
-        const validatedResults = validateOptions(['fakeSearch'], {concurrency: 3, silent: true});
-        const expectedResults = {processedGlobArray: [], validatedOptions: {concurrency: 3, silent: true}};
+        const validatedResults = validateOptions(['fakeSearch', ['fakeSearch']], {concurrency: 3, silent: true});
+        const expectedResults = {processedGlobArray: [['fakeSearch']], validatedOptions: {concurrency: 3, silent: true}};
 
         expect(validatedResults).toEqual(expectedResults);
     })
