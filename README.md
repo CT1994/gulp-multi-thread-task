@@ -1,10 +1,10 @@
 <p align="center">  
-    <img height="257" width="458" src="https://raw.githubusercontent.com/CT1994/gulp-multi-thread-task/artwork/gulp-multi-thread-task-2x.png">  
-</p>  
+    <img height="257" width="458" src="./artwork/gulp-multi-thread-task-2x.png">  
+</p>
   
 ## Installation  
   
-```npm install gulp-multi-process --save-dev```  
+```npm install gulp-multi-thread-task --save-dev```  
   
 ## What is gulp-multi-thread-task?  
   
