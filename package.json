@@ -8,7 +8,7 @@
     "test": "cross-env NODE_ENV=test jest"
   },
   "author": "Constantinos Tsiakouris",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "colors": "^1.4.0",
     "fancy-log": "^1.3.3",
@@ -21,5 +21,30 @@
     "cross-env": "^7.0.2",
     "gulp": "^4.0.2",
     "jest": "^26.4.2"
-  }
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CT1994/gulp-multi-thread-task.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CT1994/gulp-multi-thread-task/issues"
+  },
+  "homepage": "https://github.com/CT1994/gulp-multi-thread-task#readme",
+  "keywords": [
+    "gulp",
+    "gulp-plugin",
+    "gulpplugin",
+    "speed",
+    "performance",
+    "multi-process",
+    "threads",
+    "parallel",
+    "concurrent",
+    "concurrency",
+    "cluster"
+  ]
 }
