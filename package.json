@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest"
+    "test": "cross-env NODE_ENV=test jest"
   },
   "author": "Constantinos Tsiakouris",
   "license": "ISC",
@@ -18,6 +18,8 @@
     "through2": "^4.0.2"
   },
   "devDependencies": {
+    "cross-env": "^7.0.2",
+    "gulp": "^4.0.2",
     "jest": "^26.4.2"
   }
 }
