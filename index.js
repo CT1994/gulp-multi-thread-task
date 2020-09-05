@@ -10,8 +10,9 @@ require('colors');
  * @param {Object} handlers
  * @param {MultiThreadOptions} options
  * @return {Promise}
+ * @private
  */
-function createWorker(handlers, options) {
+function _createWorker(handlers, options) {
     cluster.setupMaster({
         silent: options.silent
     });
@@ -30,15 +31,16 @@ function createWorker(handlers, options) {
  * @param {Array<string>|Array<Array<string>>} processedGlobArray
  * @param {MultiThreadOptions} options
  * @return {Promise<Array<Promise>>}
+ * @private
  */
-function spawnWorkers(processedGlobArray, options) {
+function _spawnWorkers(processedGlobArray, options) {
     log(`spawning ${options.concurrency.toString().yellow} worker`);
 
     const handlers = masterMessageHandlers(processedGlobArray);
 
     const promises = [];
     for (let i = 0; i < options.concurrency; ++i) {
-        promises.push(createWorker(handlers, options));
+        promises.push(_createWorker(handlers, options));
     }
 
     return Promise.all(promises);
@@ -55,7 +57,7 @@ function spawnWorkers(processedGlobArray, options) {
 function GulpMultiThreadTask(globArray, builder, options = {}) {
     if (cluster.isMaster) {
         const {processedGlobArray, validatedOptions} = validateOptions(globArray, options);
-        return spawnWorkers(processedGlobArray, validatedOptions);
+        return _spawnWorkers(processedGlobArray, validatedOptions);
     } else {
         const messageHandlers = workerMessageHandlers(builder)
         process.on('message', message => messageHandlers[message.type](message));
