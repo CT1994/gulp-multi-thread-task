@@ -2,6 +2,7 @@
     <img height="257" width="458" src="./artwork/gulp-multi-thread-task-2x.png">  
 </p>
 
+![Node.js Package](https://github.com/CT1994/gulp-multi-thread-task/workflows/Node.js%20Package/badge.svg)
 ![Node.js CI](https://github.com/CT1994/gulp-multi-thread-task/workflows/Node.js%20CI/badge.svg)
 
 ## Installation  
