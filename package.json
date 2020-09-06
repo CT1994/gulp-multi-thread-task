@@ -30,9 +30,6 @@
     "type": "git",
     "url": "git+https://github.com/CT1994/gulp-multi-thread-task.git"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "bugs": {
     "url": "https://github.com/CT1994/gulp-multi-thread-task/issues"
   },
