@@ -1,7 +1,9 @@
 <p align="center">  
     <img height="257" width="458" src="./artwork/gulp-multi-thread-task-2x.png">  
 </p>
-  
+
+![Node.js CI](https://github.com/CT1994/gulp-multi-thread-task/workflows/Node.js%20CI/badge.svg)
+
 ## Installation  
   
 ```npm install gulp-multi-thread-task --save-dev```  
