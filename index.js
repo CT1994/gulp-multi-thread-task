@@ -62,6 +62,7 @@ function GulpMultiThreadTask(globArray, builder, options = {}) {
         const messageHandlers = workerMessageHandlers(builder)
         process.on('message', message => messageHandlers[message.type](message));
         process.on('uncaughtException', (error) => messageHandlers.sendError(error));
+        process.on('unhandledRejection', (error) => messageHandlers.sendError(error));
         return messageHandlers.workerPromise;
     }
 }
