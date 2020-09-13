@@ -19,6 +19,8 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
+    "eslint": "^7.9.0",
+    "eslint-config-google": "^0.14.0",
     "gulp": "^4.0.2",
     "jest": "^26.4.2"
   },

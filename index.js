@@ -1,7 +1,10 @@
 const cluster = require('cluster');
 const log = require('fancy-log');
 
-const {masterMessageHandlers, workerMessageHandlers} = require("./lib/message-handlers");
+const {
+  masterMessageHandlers,
+  workerMessageHandlers,
+} = require('./lib/message-handlers');
 const {validateOptions} = require('./lib/options-helpers');
 require('colors');
 
@@ -13,17 +16,19 @@ require('colors');
  * @private
  */
 function _createWorker(handlers, options) {
-    cluster.setupMaster({
-        silent: options.silent
-    });
+  cluster.setupMaster({
+    silent: options.silent,
+  });
 
-    const worker = cluster.fork();
+  const worker = cluster.fork();
 
-    return new Promise(function (resolve, reject) {
-        worker.on('message', message => handlers[message.type](worker, message, reject));
-        worker.on('exit', resolve);
-        worker.on('error', reject);
+  return new Promise(function(resolve, reject) {
+    worker.on('message', (message) => {
+      handlers[message.type](worker, message, reject);
     });
+    worker.on('exit', resolve);
+    worker.on('error', reject);
+  });
 }
 
 /**
@@ -34,16 +39,16 @@ function _createWorker(handlers, options) {
  * @private
  */
 function _spawnWorkers(processedGlobArray, options) {
-    log(`spawning ${options.concurrency.toString().yellow} worker`);
+  log(`spawning ${options.concurrency.toString().yellow} worker`);
 
-    const handlers = masterMessageHandlers(processedGlobArray);
+  const handlers = masterMessageHandlers(processedGlobArray);
 
-    const promises = [];
-    for (let i = 0; i < options.concurrency; ++i) {
-        promises.push(_createWorker(handlers, options));
-    }
+  const promises = [];
+  for (let i = 0; i < options.concurrency; ++i) {
+    promises.push(_createWorker(handlers, options));
+  }
 
-    return Promise.all(promises);
+  return Promise.all(promises);
 }
 
 /**
@@ -55,16 +60,19 @@ function _spawnWorkers(processedGlobArray, options) {
  * @constructor
  */
 function GulpMultiThreadTask(globArray, builder, options = {}) {
-    if (cluster.isMaster) {
-        const {processedGlobArray, validatedOptions} = validateOptions(globArray, options);
-        return _spawnWorkers(processedGlobArray, validatedOptions);
-    } else {
-        const messageHandlers = workerMessageHandlers(builder)
-        process.on('message', message => messageHandlers[message.type](message));
-        process.on('uncaughtException', (error) => messageHandlers.sendError(error));
-        process.on('unhandledRejection', (error) => messageHandlers.sendError(error));
-        return messageHandlers.workerPromise;
-    }
+  if (cluster.isMaster) {
+    const {
+      processedGlobArray,
+      validatedOptions,
+    } = validateOptions(globArray, options);
+    return _spawnWorkers(processedGlobArray, validatedOptions);
+  }
+
+  const messageHandlers = workerMessageHandlers(builder);
+  process.on('message', (message) => messageHandlers[message.type](message));
+  process.on('uncaughtException', (error) => messageHandlers.sendError(error));
+  process.on('unhandledRejection', (error) => messageHandlers.sendError(error));
+  return messageHandlers.workerPromise;
 }
 
-module.exports.GulpMultiThreadTask = GulpMultiThreadTask
+module.exports.GulpMultiThreadTask = GulpMultiThreadTask;
