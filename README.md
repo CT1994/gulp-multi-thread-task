@@ -73,7 +73,7 @@ gulp style function which will run on multiple threads, required parameters gulp
 
 #### concurrency
 Type: `number`
-Default: `os.cpus().length`
+Default: `Math.min(os.cpus().length / 2, processedGlobArray.length)`
 
 The number of threads to use.
 
