@@ -44,20 +44,24 @@ function gulpBuildSprites(done, gameName = userOptionGameName) {
 // example multiple glob array to batch file process
 // you can batch a group of files together to create a single stream process
 function gulpBuildSpritesGames {
-	return GulpMultiThreadTask([
+	return GulpMultiThreadTask('build:sprites', [
 			['assets/**/game1/**/*.*(svg|png|jpg|jpeg)'],
 			['assets/**/game1/**/*.*(svg|png|jpg|jpeg)']
 		], buildSprites
 	);  
 }
 
-exports.buildSprites = gulpBuildSprites;
-exports.buildSpritesGames = gulpBuildSpriteGames
+gulp.task('build:sprites', gulpBuildSpritesGames)
 ```
 
 ## API
 
-```GulpMultiThreadTask(globArray, gulpFunction, options);```
+```GulpMultiThreadTask(taskName, globArray, gulpFunction, options);```
+
+### taskName
+Type: `string`
+
+The registered task to multi-thread
 
 ### globArray
 Type: `Array`
