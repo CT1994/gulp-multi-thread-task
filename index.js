@@ -5,7 +5,7 @@ const {
   masterMessageHandlers,
   workerMessageHandlers,
 } = require('./lib/message-handlers');
-const {validateOptions} = require('./lib/options-helpers');
+const {processOptions} = require('./lib/options-helpers');
 require('colors');
 
 /**
@@ -69,7 +69,7 @@ function GulpMultiThreadTask(taskName, globArray, builder, options = {}) {
     const {
       processedGlobArray,
       validatedOptions,
-    } = validateOptions(globArray, options);
+    } = processOptions(globArray, options);
 
     return _spawnWorkers(taskName, processedGlobArray, validatedOptions);
   }

@@ -1,35 +1,35 @@
-const {validateOptions} = require('../../lib/options-helpers');
+const {processOptions} = require('../../lib/options-helpers');
 
 describe('Options', () => {
   test('should get options and files back', () => {
-    const validatedResults = validateOptions(
+    const validatedResults = processOptions(
         ['fakeSearch', ['fakeSearch']],
-        {concurrency: 3, silent: true},
+        {concurrency: 1, silent: true},
     );
     const expectedResults = {
       processedGlobArray: [['fakeSearch']],
-      validatedOptions: {concurrency: 3, silent: true},
+      validatedOptions: {concurrency: 1, silent: true},
     };
 
     expect(validatedResults).toEqual(expectedResults);
   });
 
   test('passing an unexpected option should throw an error', () => {
-    expect(() => validateOptions([], {fakeOption: false})).toThrowError();
+    expect(() => processOptions([], {fakeOption: false})).toThrowError();
   });
 
   test('passing an invalid value for concurrency should throw an error', () => {
-    expect(() => validateOptions([], {concurrency: '2'})).toThrowError();
+    expect(() => processOptions([], {concurrency: '2'})).toThrowError();
   });
 
   test('passing an invalid value for silent should throw an error', () => {
-    expect(() => validateOptions([], {concurrency: 'false'})).toThrowError();
+    expect(() => processOptions([], {concurrency: 'false'})).toThrowError();
   });
 
   test('invalid type for globArray should throw an error', () => {
-    expect(() => validateOptions('', {}))
+    expect(() => processOptions('', {}))
         .toThrowError(new Error('globArray should be an Array'));
-    expect(() => validateOptions([{}], {}))
+    expect(() => processOptions([{}], {}))
         .toThrowError(new Error('only supports Array of string'));
   });
 });
