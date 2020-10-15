@@ -1,13 +1,36 @@
 const {processOptions} = require('../../lib/options-helpers');
+const globby = require('globby');
+
+jest.mock('globby', () => {
+  return {
+    sync: jest.fn(() => ['fakeSearch']),
+  };
+});
 
 describe('Options', () => {
+  beforeEach(() => {
+    jest.resetModules();
+  });
+
+  test('if no options are set expect default options to be used', () => {
+    const validatedResults = processOptions(
+        ['fakeSearch', ['fakeSearch']],
+    );
+    const expectedResults = {concurrency: 2, silent: false};
+
+    expect(validatedResults.validatedOptions).toEqual(expectedResults);
+  });
+
   test('should get options and files back', () => {
+    globby.sync.mockReturnValueOnce(['fakeSearch']);
+
     const validatedResults = processOptions(
         ['fakeSearch', ['fakeSearch']],
         {concurrency: 1, silent: true},
     );
+
     const expectedResults = {
-      processedGlobArray: [['fakeSearch']],
+      processedGlobArray: ['fakeSearch', ['fakeSearch']],
       validatedOptions: {concurrency: 1, silent: true},
     };
 
