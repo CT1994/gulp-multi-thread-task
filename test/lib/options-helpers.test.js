@@ -1,5 +1,10 @@
 const {processOptions} = require('../../lib/options-helpers');
-const globby = require('globby');
+
+jest.mock('os', () => {
+  return {
+    cpus: jest.fn(() => ['fakeCPU', 'fakeCPU']),
+  };
+});
 
 jest.mock('globby', () => {
   return {
@@ -16,14 +21,12 @@ describe('Options', () => {
     const validatedResults = processOptions(
         ['fakeSearch', ['fakeSearch']],
     );
-    const expectedResults = {concurrency: 2, silent: false};
+    const expectedResults = {concurrency: 1, silent: false};
 
     expect(validatedResults.validatedOptions).toEqual(expectedResults);
   });
 
   test('should get options and files back', () => {
-    globby.sync.mockReturnValueOnce(['fakeSearch']);
-
     const validatedResults = processOptions(
         ['fakeSearch', ['fakeSearch']],
         {concurrency: 1, silent: true},
